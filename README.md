@@ -116,3 +116,91 @@ if __name__ == "__main__":
 #     * Combination Sum (LC #39)
 #     * Subset Sum variations
 # ----------------------------------------------------
+
+
+"""
+Day 51: Permutations (LeetCode #46)
+Author: [Your Name]
+Date: [Today's Date]
+
+Problem Statement:
+Given an array nums of distinct integers, return all possible permutations.
+You can return the answer in any order.
+
+Example:
+Input: nums = [1,2,3]
+Output:
+[
+  [1,2,3],
+  [1,3,2],
+  [2,1,3],
+  [2,3,1],
+  [3,1,2],
+  [3,2,1]
+]
+"""
+
+# ----------------------------------------------------
+# Approach: Backtracking
+# ----------------------------------------------------
+"""
+Idea:
+- Use backtracking to build permutations one number at a time.
+- Keep track of which elements are already used.
+- When the current permutation reaches length n, add it to results.
+
+Steps:
+1. Use a `path` list to store the current permutation.
+2. For each unused number, add it → recurse → remove it (backtrack).
+3. Continue until all elements are used.
+
+Time Complexity: O(n * n!)
+Space Complexity: O(n) recursion depth
+"""
+
+def permute(nums):
+    res = []
+    used = [False] * len(nums)
+
+    def backtrack(path):
+        # Base case: one full permutation built
+        if len(path) == len(nums):
+            res.append(path.copy())
+            return
+        
+        # Try each unused number
+        for i in range(len(nums)):
+            if not used[i]:
+                used[i] = True
+                path.append(nums[i])
+
+                backtrack(path)
+
+                # Backtrack (undo the choice)
+                path.pop()
+                used[i] = False
+    
+    backtrack([])
+    return res
+
+
+# ----------------------------------------------------
+# Example Usage
+# ----------------------------------------------------
+if __name__ == "__main__":
+    nums = [1, 2, 3]
+    print("All permutations of", nums, "are:")
+    for p in permute(nums):
+        print(p)
+
+
+# ----------------------------------------------------
+# Key Notes:
+# ----------------------------------------------------
+# - This is a classic BACKTRACKING problem.
+# - Builds on the same recursion logic as subsets/combinations.
+# - Key idea: choose an element → explore → un-choose (backtrack).
+# - Related problems:
+#     * LC #47 – Permutations II (with duplicates)
+#     * LC #784 – Letter Case Permutation
+# ----------------------------------------------------
