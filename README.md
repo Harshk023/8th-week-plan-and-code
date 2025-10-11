@@ -204,3 +204,132 @@ if __name__ == "__main__":
 #     * LC #47 – Permutations II (with duplicates)
 #     * LC #784 – Letter Case Permutation
 # ----------------------------------------------------
+
+
+
+"""
+Day 52: Combination Sum (LeetCode #39, #40)
+Author: [Your Name]
+Date: [Today's Date]
+
+Problems Covered:
+1️⃣ LC #39 – Combination Sum
+2️⃣ LC #40 – Combination Sum II
+"""
+
+# ----------------------------------------------------
+# 1️⃣ LC #39 – Combination Sum
+# ----------------------------------------------------
+"""
+Problem:
+Given an array of distinct integers 'candidates' and a target integer 'target',
+return all unique combinations where the chosen numbers sum to 'target'.
+You may reuse the same number multiple times.
+
+Example:
+Input: candidates = [2,3,6,7], target = 7
+Output: [[2,2,3],[7]]
+
+Approach:
+- Use backtracking to explore all possible combinations.
+- At each step, either pick the current number (reuse allowed) or move to the next one.
+- Stop when the running sum exceeds target.
+
+Time Complexity: O(2^n)
+Space Complexity: O(n)
+"""
+
+def combinationSum(candidates, target):
+    res = []
+    path = []
+
+    def backtrack(start, total):
+        # Base cases
+        if total == target:
+            res.append(path.copy())
+            return
+        if total > target:
+            return
+        
+        # Explore all choices
+        for i in range(start, len(candidates)):
+            path.append(candidates[i])
+            backtrack(i, total + candidates[i])  # reuse allowed
+            path.pop()
+    
+    backtrack(0, 0)
+    return res
+
+
+# ----------------------------------------------------
+# 2️⃣ LC #40 – Combination Sum II
+# ----------------------------------------------------
+"""
+Problem:
+Given a collection of candidate numbers (candidates) and a target number (target),
+find all unique combinations where each number can be used at most once.
+The solution set must not contain duplicate combinations.
+
+Example:
+Input: candidates = [10,1,2,7,6,1,5], target = 8
+Output: [[1,1,6],[1,2,5],[1,7],[2,6]]
+
+Approach:
+- Sort the list to handle duplicates easily.
+- At each recursion level, skip duplicate numbers.
+- Use `i + 1` to ensure each number is used only once.
+
+Time Complexity: O(2^n)
+Space Complexity: O(n)
+"""
+
+def combinationSum2(candidates, target):
+    res = []
+    path = []
+    candidates.sort()
+
+    def backtrack(start, total):
+        if total == target:
+            res.append(path.copy())
+            return
+        if total > target:
+            return
+
+        prev = -1
+        for i in range(start, len(candidates)):
+            # Skip duplicates at the same level
+            if candidates[i] == prev:
+                continue
+            path.append(candidates[i])
+            backtrack(i + 1, total + candidates[i])
+            path.pop()
+            prev = candidates[i]
+    
+    backtrack(0, 0)
+    return res
+
+
+# ----------------------------------------------------
+# Example Usage
+# ----------------------------------------------------
+if __name__ == "__main__":
+    print("🔹 LC #39 – Combination Sum:")
+    print(combinationSum([2, 3, 6, 7], 7))  # [[2,2,3],[7]]
+
+    print("\n🔹 LC #40 – Combination Sum II:")
+    print(combinationSum2([10,1,2,7,6,1,5], 8))  # [[1,1,6],[1,2,5],[1,7],[2,6]]
+
+
+# ----------------------------------------------------
+# Key Notes:
+# ----------------------------------------------------
+# ✅ LC #39 → Reuse allowed (i stays same)
+# ✅ LC #40 → Unique combinations (use i+1, skip duplicates)
+# 🧩 Mastering these problems builds strong intuition for:
+#     - Backtracking tree pruning
+#     - Avoiding duplicates
+#     - Managing recursion states
+# 🚀 Forms foundation for advanced problems like:
+#     * Combination Sum III (LC #216)
+#     * Subset Sum variants
+# ----------------------------------------------------
