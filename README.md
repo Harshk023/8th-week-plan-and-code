@@ -333,3 +333,120 @@ if __name__ == "__main__":
 #     * Combination Sum III (LC #216)
 #     * Subset Sum variants
 # ----------------------------------------------------
+
+
+"""
+Day 53: N-Queens Problem (LeetCode #51)
+Author: [Your Name]
+Date: [Today's Date]
+
+Problem Statement:
+The N-Queens puzzle is to place N queens on an N×N chessboard so that no two queens attack each other.
+A queen can attack in the same row, column, or diagonal.
+
+Example:
+Input: n = 4
+Output: 
+[
+ [".Q..",
+  "...Q",
+  "Q...",
+  "..Q."]
+]
+"""
+
+# ----------------------------------------------------
+# Approach: Backtracking
+# ----------------------------------------------------
+"""
+Intuition:
+We place one queen per row and use backtracking to explore all valid placements.
+
+Constraints:
+- Only one queen per row.
+- No two queens share the same column or diagonal.
+
+How to detect conflicts:
+- Keep track of columns, diagonals (r+c), and anti-diagonals (r-c).
+
+Steps:
+1️⃣ Start from row 0.
+2️⃣ Try placing a queen in each column of the current row.
+3️⃣ Skip if the column or diagonal is under attack.
+4️⃣ If valid, mark it and move to the next row.
+5️⃣ If all rows are filled, store the board configuration.
+6️⃣ Backtrack to explore other possibilities.
+
+Time Complexity: O(N!)
+Space Complexity: O(N²)
+"""
+
+def solveNQueens(n):
+    res = []
+    board = [["."] * n for _ in range(n)]
+
+    cols = set()         # columns under attack
+    posDiag = set()      # (r + c) diagonals under attack
+    negDiag = set()      # (r - c) diagonals under attack
+
+    def backtrack(r):
+        # Base case: placed all queens
+        if r == n:
+            # Convert board to list of strings
+            copy = ["".join(row) for row in board]
+            res.append(copy)
+            return
+
+        for c in range(n):
+            # Skip if column or diagonal is under attack
+            if c in cols or (r + c) in posDiag or (r - c) in negDiag:
+                continue
+
+            # Place the queen
+            board[r][c] = "Q"
+            cols.add(c)
+            posDiag.add(r + c)
+            negDiag.add(r - c)
+
+            # Recurse for next row
+            backtrack(r + 1)
+
+            # Backtrack (remove the queen)
+            board[r][c] = "."
+            cols.remove(c)
+            posDiag.remove(r + c)
+            negDiag.remove(r - c)
+
+    backtrack(0)
+    return res
+
+
+# ----------------------------------------------------
+# Example Usage
+# ----------------------------------------------------
+if __name__ == "__main__":
+    n = 4
+    print(f"🔹 All solutions for {n}-Queens problem:")
+    solutions = solveNQueens(n)
+    for sol in solutions:
+        for row in sol:
+            print(row)
+        print()
+
+
+# ----------------------------------------------------
+# Key Notes:
+# ----------------------------------------------------
+# ✅ Backtracking pattern:
+#    - Choose
+#    - Explore
+#    - Un-choose
+# ✅ Constraints handled using sets for O(1) conflict checks.
+# ✅ Teaches:
+#    - Constraint satisfaction problems
+#    - Efficient pruning in recursion
+# 🚀 Foundation for:
+#    - Sudoku Solver
+#    - Word Search
+#    - N-Rooks / N-Knights variations
+# ----------------------------------------------------
