@@ -450,3 +450,106 @@ if __name__ == "__main__":
 #    - Word Search
 #    - N-Rooks / N-Knights variations
 # ----------------------------------------------------
+
+
+"""
+Day 54: Word Search (LeetCode #79)
+Author: [Your Name]
+Date: [Today's Date]
+
+Problem Statement:
+Given an m x n grid of characters 'board' and a string 'word',
+return True if 'word' exists in the grid.
+
+The word can be constructed from letters of sequentially adjacent cells,
+where adjacent cells are horizontally or vertically neighboring.
+The same letter cell may not be used more than once.
+
+Example:
+Input: board = [
+  ["A","B","C","E"],
+  ["S","F","C","S"],
+  ["A","D","E","E"]
+], word = "ABCCED"
+Output: True
+"""
+
+# ----------------------------------------------------
+# Approach: Backtracking (DFS)
+# ----------------------------------------------------
+"""
+Intuition:
+- For each cell, check if it can be the start of the given word.
+- From each matching cell, explore all 4 directions recursively.
+- Mark cells as visited to avoid reuse.
+- Backtrack after each recursive call to explore new paths.
+
+Steps:
+1️⃣ Traverse every cell in the board.
+2️⃣ When board[r][c] == word[0], start DFS from there.
+3️⃣ Explore all directions (up, down, left, right).
+4️⃣ Return True if full word is matched.
+
+Time Complexity: O(N * M * 4^L)
+   where N, M = grid dimensions, L = word length
+Space Complexity: O(L) recursion depth
+"""
+
+def exist(board, word):
+    ROWS, COLS = len(board), len(board[0])
+
+    def backtrack(r, c, i):
+        # If we matched all characters
+        if i == len(word):
+            return True
+        # Out of bounds or mismatch
+        if r < 0 or c < 0 or r >= ROWS or c >= COLS or board[r][c] != word[i]:
+            return False
+
+        # Mark current cell as visited
+        temp = board[r][c]
+        board[r][c] = "#"
+
+        # Explore all 4 directions
+        res = (backtrack(r + 1, c, i + 1) or
+               backtrack(r - 1, c, i + 1) or
+               backtrack(r, c + 1, i + 1) or
+               backtrack(r, c - 1, i + 1))
+
+        # Backtrack (restore cell)
+        board[r][c] = temp
+        return res
+
+    # Try to start from each cell
+    for r in range(ROWS):
+        for c in range(COLS):
+            if backtrack(r, c, 0):
+                return True
+    return False
+
+
+# ----------------------------------------------------
+# Example Usage
+# ----------------------------------------------------
+if __name__ == "__main__":
+    board = [
+        ["A","B","C","E"],
+        ["S","F","C","S"],
+        ["A","D","E","E"]
+    ]
+    word = "ABCCED"
+    print(f"🔹 Word '{word}' exists in board:", exist(board, word))  # Expected: True
+
+
+# ----------------------------------------------------
+# Key Notes:
+# ----------------------------------------------------
+# ✅ Classic backtracking problem on a 2D grid.
+# ✅ Each recursive call explores valid directions.
+# ✅ Ensures no cell is reused by marking as visited.
+# ✅ Strengthens understanding of DFS + Backtracking.
+# 🚀 Foundation for:
+#     - Sudoku Solver (LC #37)
+#     - Word Search II (LC #212)
+#     - Island counting problems
+# ----------------------------------------------------
