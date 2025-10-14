@@ -553,3 +553,193 @@ if __name__ == "__main__":
 #     - Word Search II (LC #212)
 #     - Island counting problems
 # ----------------------------------------------------
+
+
+"""
+Day 55: Review of Backtracking Patterns
+Author: [Your Name]
+Date: [Today's Date]
+
+Overview:
+This file revisits all major backtracking patterns learned so far.
+Backtracking = "Try → Explore → Undo"
+Key idea: Build solutions incrementally and backtrack when a path fails.
+"""
+
+# ----------------------------------------------------
+# 1️⃣ Subsets (LC #78)
+# ----------------------------------------------------
+"""
+Generate all possible subsets (the power set) of a given list.
+Choice: include or exclude each element.
+"""
+
+def subsets(nums):
+    res = []
+    subset = []
+
+    def backtrack(index):
+        if index == len(nums):
+            res.append(subset.copy())
+            return
+        subset.append(nums[index])
+        backtrack(index + 1)
+        subset.pop()
+        backtrack(index + 1)
+
+    backtrack(0)
+    return res
+
+
+# ----------------------------------------------------
+# 2️⃣ Permutations (LC #46)
+# ----------------------------------------------------
+"""
+Generate all possible orderings of distinct numbers.
+Choice: pick unused numbers until all are chosen.
+"""
+
+def permute(nums):
+    res = []
+    used = [False] * len(nums)
+
+    def backtrack(path):
+        if len(path) == len(nums):
+            res.append(path.copy())
+            return
+        for i in range(len(nums)):
+            if not used[i]:
+                used[i] = True
+                path.append(nums[i])
+                backtrack(path)
+                path.pop()
+                used[i] = False
+    backtrack([])
+    return res
+
+
+# ----------------------------------------------------
+# 3️⃣ Combination Sum (LC #39)
+# ----------------------------------------------------
+"""
+Choose numbers that sum to target (reuse allowed).
+Choice: include same number again or skip to next.
+"""
+
+def combinationSum(candidates, target):
+    res = []
+    path = []
+
+    def backtrack(start, total):
+        if total == target:
+            res.append(path.copy())
+            return
+        if total > target:
+            return
+        for i in range(start, len(candidates)):
+            path.append(candidates[i])
+            backtrack(i, total + candidates[i])
+            path.pop()
+
+    backtrack(0, 0)
+    return res
+
+
+# ----------------------------------------------------
+# 4️⃣ N-Queens (LC #51)
+# ----------------------------------------------------
+"""
+Place N queens so that none attack each other.
+Choice: pick a valid column per row and recurse.
+"""
+
+def solveNQueens(n):
+    res = []
+    board = [["."] * n for _ in range(n)]
+    cols, posDiag, negDiag = set(), set(), set()
+
+    def backtrack(r):
+        if r == n:
+            res.append(["".join(row) for row in board])
+            return
+        for c in range(n):
+            if c in cols or (r + c) in posDiag or (r - c) in negDiag:
+                continue
+            board[r][c] = "Q"
+            cols.add(c)
+            posDiag.add(r + c)
+            negDiag.add(r - c)
+            backtrack(r + 1)
+            board[r][c] = "."
+            cols.remove(c)
+            posDiag.remove(r + c)
+            negDiag.remove(r - c)
+
+    backtrack(0)
+    return res
+
+
+# ----------------------------------------------------
+# 5️⃣ Word Search (LC #79)
+# ----------------------------------------------------
+"""
+Search a word in a 2D grid using DFS + Backtracking.
+Choice: move up, down, left, right while matching characters.
+"""
+
+def exist(board, word):
+    ROWS, COLS = len(board), len(board[0])
+
+    def backtrack(r, c, i):
+        if i == len(word):
+            return True
+        if r < 0 or c < 0 or r >= ROWS or c >= COLS or board[r][c] != word[i]:
+            return False
+
+        temp = board[r][c]
+        board[r][c] = "#"
+
+        res = (backtrack(r + 1, c, i + 1) or
+               backtrack(r - 1, c, i + 1) or
+               backtrack(r, c + 1, i + 1) or
+               backtrack(r, c - 1, i + 1))
+
+        board[r][c] = temp
+        return res
+
+    for r in range(ROWS):
+        for c in range(COLS):
+            if backtrack(r, c, 0):
+                return True
+    return False
+
+
+# ----------------------------------------------------
+# Example Usage
+# ----------------------------------------------------
+if __name__ == "__main__":
+    print("1️⃣ Subsets [1,2,3]:", subsets([1,2,3]))
+    print("2️⃣ Permutations [1,2,3]:", permute([1,2,3]))
+    print("3️⃣ Combination Sum [2,3,6,7], target=7:", combinationSum([2,3,6,7], 7))
+    print("4️⃣ 4-Queens solutions:", len(solveNQueens(4)))
+    board = [
+        ["A","B","C","E"],
+        ["S","F","C","S"],
+        ["A","D","E","E"]
+    ]
+    print("5️⃣ Word Search 'ABCCED':", exist(board, "ABCCED"))
+
+
+# ----------------------------------------------------
+# Key Notes:
+# ----------------------------------------------------
+# ✅ Backtracking = Systematic exploration with pruning.
+# ✅ Steps for any backtracking problem:
+#    1. Define choices
+#    2. Apply constraints
+#    3. Recurse and backtrack
+# ✅ Common real-world applications:
+#    - Constraint satisfaction (N-Queens, Sudoku)
+#    - Combinatorial generation (Subsets, Permutations)
+#    - Search problems (Word Search, Maze)
+# ----------------------------------------------------
