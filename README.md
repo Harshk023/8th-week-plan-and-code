@@ -743,3 +743,190 @@ if __name__ == "__main__":
 #    - Combinatorial generation (Subsets, Permutations)
 #    - Search problems (Word Search, Maze)
 # ----------------------------------------------------
+
+
+"""
+Day 56: Backtracking Practice Problems
+Author: [Your Name]
+Date: [Today's Date]
+
+Problems Covered:
+1️⃣ LC #78 – Subsets
+2️⃣ LC #46 – Permutations
+3️⃣ LC #39 – Combination Sum
+4️⃣ LC #51 – N-Queens
+5️⃣ LC #79 – Word Search
+"""
+
+# ----------------------------------------------------
+# 1️⃣ LC #78 – Subsets
+# ----------------------------------------------------
+"""
+Generate all possible subsets (power set) of a given list.
+Each element can either be included or excluded.
+"""
+def subsets(nums):
+    res = []
+    subset = []
+
+    def backtrack(index):
+        if index == len(nums):
+            res.append(subset.copy())
+            return
+        subset.append(nums[index])
+        backtrack(index + 1)
+        subset.pop()
+        backtrack(index + 1)
+
+    backtrack(0)
+    return res
+
+
+# ----------------------------------------------------
+# 2️⃣ LC #46 – Permutations
+# ----------------------------------------------------
+"""
+Generate all possible orderings of a given list of distinct numbers.
+Use a 'used' array to track selected elements.
+"""
+def permute(nums):
+    res = []
+    used = [False] * len(nums)
+
+    def backtrack(path):
+        if len(path) == len(nums):
+            res.append(path.copy())
+            return
+        for i in range(len(nums)):
+            if not used[i]:
+                used[i] = True
+                path.append(nums[i])
+                backtrack(path)
+                path.pop()
+                used[i] = False
+    backtrack([])
+    return res
+
+
+# ----------------------------------------------------
+# 3️⃣ LC #39 – Combination Sum
+# ----------------------------------------------------
+"""
+Find all unique combinations that sum up to a target.
+You may reuse the same number multiple times.
+"""
+def combinationSum(candidates, target):
+    res = []
+    path = []
+
+    def backtrack(start, total):
+        if total == target:
+            res.append(path.copy())
+            return
+        if total > target:
+            return
+        for i in range(start, len(candidates)):
+            path.append(candidates[i])
+            backtrack(i, total + candidates[i])
+            path.pop()
+
+    backtrack(0, 0)
+    return res
+
+
+# ----------------------------------------------------
+# 4️⃣ LC #51 – N-Queens
+# ----------------------------------------------------
+"""
+Place N queens on an NxN board such that no two queens attack each other.
+"""
+def solveNQueens(n):
+    res = []
+    board = [["."] * n for _ in range(n)]
+    cols, posDiag, negDiag = set(), set(), set()
+
+    def backtrack(r):
+        if r == n:
+            res.append(["".join(row) for row in board])
+            return
+        for c in range(n):
+            if c in cols or (r + c) in posDiag or (r - c) in negDiag:
+                continue
+            board[r][c] = "Q"
+            cols.add(c)
+            posDiag.add(r + c)
+            negDiag.add(r - c)
+            backtrack(r + 1)
+            board[r][c] = "."
+            cols.remove(c)
+            posDiag.remove(r + c)
+            negDiag.remove(r - c)
+
+    backtrack(0)
+    return res
+
+
+# ----------------------------------------------------
+# 5️⃣ LC #79 – Word Search
+# ----------------------------------------------------
+"""
+Check if a given word exists in a 2D grid.
+Move horizontally or vertically to adjacent cells.
+"""
+def exist(board, word):
+    ROWS, COLS = len(board), len(board[0])
+
+    def backtrack(r, c, i):
+        if i == len(word):
+            return True
+        if r < 0 or c < 0 or r >= ROWS or c >= COLS or board[r][c] != word[i]:
+            return False
+        temp = board[r][c]
+        board[r][c] = "#"
+        res = (backtrack(r + 1, c, i + 1) or
+               backtrack(r - 1, c, i + 1) or
+               backtrack(r, c + 1, i + 1) or
+               backtrack(r, c - 1, i + 1))
+        board[r][c] = temp
+        return res
+
+    for r in range(ROWS):
+        for c in range(COLS):
+            if backtrack(r, c, 0):
+                return True
+    return False
+
+
+# ----------------------------------------------------
+# Example Usage
+# ----------------------------------------------------
+if __name__ == "__main__":
+    print("1️⃣ Subsets of [1,2,3]:", subsets([1,2,3]))
+    print("2️⃣ Permutations of [1,2,3]:", permute([1,2,3]))
+    print("3️⃣ Combination Sum [2,3,6,7], target=7:", combinationSum([2,3,6,7], 7))
+    print("4️⃣ 4-Queens solutions:", len(solveNQueens(4)))
+    board = [
+        ["A","B","C","E"],
+        ["S","F","C","S"],
+        ["A","D","E","E"]
+    ]
+    print("5️⃣ Word Search 'ABCCED':", exist(board, "ABCCED"))
+
+
+# ----------------------------------------------------
+# 🧠 Summary of Backtracking Patterns:
+# ----------------------------------------------------
+# ✅ Subsets → Binary choice (include/exclude)
+# ✅ Permutations → Choose unused elements
+# ✅ Combination Sum → Reuse allowed (i stays same)
+# ✅ N-Queens → Constraint satisfaction
+# ✅ Word Search → 2D grid traversal
+#
+# 🚀 Core backtracking formula:
+#    def backtrack(...):
+#        if goal_reached: save_solution()
+#        for choice in choices:
+#            make_choice()
+#            backtrack(...)
+#            undo_choice()
+# ----------------------------------------------------
